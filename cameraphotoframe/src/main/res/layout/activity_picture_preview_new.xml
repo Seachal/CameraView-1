@@ -6,20 +6,25 @@
                 android:background="@android:color/white">
 
 
-    <ImageView
-        android:id="@+id/image"
+    <!--<ImageView-->
+        <!--android:id="@+id/image"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:adjustViewBounds="true"/>-->
+    <com.yalantis.ucrop.view.UCropView
+        android:id="@+id/ucrop"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:adjustViewBounds="true"/>
+        android:layout_height="match_parent"/>
 
-    <!--  蒙版-->
-    <com.otaliastudios.cameraview.demo.scanner.ScannerFinderView
-        android:id="@+id/qr_code_view_finder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        />
+
+    <!--&lt;!&ndash;  蒙版&ndash;&gt;-->
+    <!--<seachal.com.cameraphotoframe.scanner.ScannerFinderView-->
+        <!--android:id="@+id/qr_code_view_finder"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--/>-->
 
 
 </RelativeLayout>

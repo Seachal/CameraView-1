@@ -14,7 +14,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"/>
 
-        <com.otaliastudios.cameraview.demo.MessageView
+        <seachal.com.cameraphotoframe.MessageView
             android:id="@+id/actualResolution"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

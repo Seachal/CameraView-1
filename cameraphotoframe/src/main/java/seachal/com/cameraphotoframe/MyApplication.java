@@ -1,4 +1,4 @@
-package com.otaliastudios.cameraview.demo;
+package seachal.com.cameraphotoframe;
 
 import android.app.Application;
 import android.content.Context;

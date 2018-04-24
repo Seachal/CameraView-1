@@ -1,4 +1,4 @@
-package com.otaliastudios.cameraview.demo.scanner;
+package seachal.com.cameraphotoframe.scanner;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -13,9 +13,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.otaliastudios.cameraview.demo.R;
-import com.otaliastudios.cameraview.demo.utils.ScreenUtils;
+import seachal.com.cameraphotoframe.R;
+import seachal.com.cameraphotoframe.utils.ScreenUtils;
 
+
+/**
+ *  拍照时的蒙层
+ */
 public final class ScannerFinderView extends RelativeLayout {
 
     private static final int[] SCANNER_ALPHA = { 0, 64, 128, 192, 255, 192, 128, 64 };

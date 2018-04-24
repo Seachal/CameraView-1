@@ -1,4 +1,4 @@
-package com.otaliastudios.cameraview.demo.utils;
+package seachal.com.cameraphotoframe.utils;
 
 import android.content.Context;
 import android.graphics.Point;
@@ -6,7 +6,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.otaliastudios.cameraview.demo.MyApplication;
+import seachal.com.cameraphotoframe.MyApplication;
 
 
 /**
