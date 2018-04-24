@@ -1,0 +1,7 @@
+<resources>
+    <string name="ucrop_label_original">Origineel</string>
+    <string name="ucrop_label_edit_photo">Foto bewerken</string>
+    <string name="ucrop_menu_crop">Bijsnijden</string>
+
+    <string name="ucrop_crop_filename">%1$d_%2$s</string>
+</resources>
