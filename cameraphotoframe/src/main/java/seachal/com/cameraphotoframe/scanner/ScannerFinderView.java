@@ -69,7 +69,11 @@ public final class ScannerFinderView extends RelativeLayout {
         mAngleLength = 40;
         mScannerAlpha = 0;
         init(context);
-        this.setOnTouchListener(getTouchListener());
+        /**
+         * 以为遮罩层是在  CameraView 的上面（层叠），所以，档遮罩层不设置touchlistener时，
+         * CameraView 的触摸事件才有了效果。
+         */
+//        this.setOnTouchListener(getTouchListener());
     }
 
     private void init(Context context) {

@@ -28,11 +28,10 @@ import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
-import com.otaliastudios.cameraview.CameraListener;
 import com.otaliastudios.cameraview.CameraLogger;
-import com.otaliastudios.cameraview.CameraOptions;
-import com.otaliastudios.cameraview.CameraView;
-import com.otaliastudios.cameraview.Size;
+import com.wonderkiln.camerakit.CameraKitEventCallback;
+import com.wonderkiln.camerakit.CameraKitImage;
+import com.wonderkiln.camerakit.CameraView;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -50,8 +49,11 @@ import seachal.com.cameraphotoframe.scanner.ScannerFinderView;
 
 //public class CameraActivity extends AppCompatActivity implements View.OnClickListener, /*ControlView.Callback,*/ SurfaceHolder.Callback {
 
-public class CameraActivity extends BaseActivity implements View.OnClickListener,
+public class CameraActivityKit extends BaseActivity implements View.OnClickListener,
         RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener  {
+
+    public static final String  TAG  = CameraActivityKit.class.getSimpleName()+"2:";
+
     private CameraView camera;
 //    private ViewGroup controlPanel;
 
@@ -59,13 +61,12 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     private boolean mCapturingVideo;
 
     // To show stuff in the callback   图片尺寸信息
-    private Size mCaptureNativeSize;
+//    private Size mCaptureNativeSize;
     private long mCaptureTime;
 
     private long mSkipTime;
 
-    private static final String TAG1 = "CameraA:";
-    private static final String TAG2 = "CameraA2:";
+
 
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 134;
 ////seachal
@@ -76,7 +77,7 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
     private static final int REQUEST_CODE_CAMERA = 131;
 
 //    select  begin
-private final static String TAGS = CameraActivity.class.getSimpleName();
+private final static String TAGS = CameraActivityKit.class.getSimpleName();
     private List<LocalMedia> selectList = new ArrayList<>();
     private RecyclerView recyclerView;
     private int maxSelectNum = 9;
@@ -134,7 +135,7 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
                 WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-        setContentView(R.layout.activity_camera);
+        setContentView(R.layout.activity_camera_kit);
 
 //        select  begin
         themeId = R.style.picture_default_style;
@@ -188,129 +189,24 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
                 ViewGroup.LayoutParams.MATCH_PARENT);
         camera.setLayoutParams(layoutParams);
 
-        camera.addCameraListener(new CameraListener() {
-            @Override
-            public void onCameraOpened(CameraOptions options) {
-//                onOpened();
-            }
-            //   onPictureTaken在被convertView调用时由convertView传入了数据，1607行
-            @Override
-            public void onPictureTaken(byte[] jpeg)
-            {
-                Log.i(TAG2 , "onPictureTaken begin" + System.currentTimeMillis() );
-                onPicture(jpeg);
-                Log.i(TAG2 , "onPictureTaken end" + System.currentTimeMillis() );
-            }
-
-        });
-
-
         findViewById(R.id.edit).setOnClickListener(this);
         findViewById(R.id.capturePhoto).setOnClickListener(this);
         findViewById(R.id.captureVideo).setOnClickListener(this);
         findViewById(R.id.toggleCamera).setOnClickListener(this);
 
-//        controlPanel = findViewById(R.id.controls);
-//        ViewGroup group = (ViewGroup) controlPanel.getChildAt(0);
-//        Control[] controls = Control.values();
-//        for (Control control : controls) {
-//            ControlView view = new ControlView(this, control, this);
-//            group.addView(view, ViewGroup.LayoutParams.MATCH_PARENT,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT);
-//        }
 
-//        controlPanel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-//            @Override
-//            public void onGlobalLayout() {
-//                BottomSheetBehavior b = BottomSheetBehavior.from(controlPanel);
-//                b.setState(BottomSheetBehavior.STATE_HIDDEN);
-//            }
-//        });
     }
 
 
     /**
-     * message 方法是封装的toast，根据重要不重要，决定显示的时间长短
+     * message 方法是风中的toast，根据重要不重要，决定显示的时间长短
      */
     private void message(String content, boolean important) {
         int length = important ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
         Toast.makeText(this, content, length).show();
     }
 
-//    camera打开时  设置camera参数
-//    private void onOpened() {
-////        NestedScrollView 里面的LinearLayout
-//        ViewGroup group = (ViewGroup) controlPanel.getChildAt(0);
-//        for (int i = 0; i < group.getChildCount(); i++) {
-//            ControlView view = (ControlView) group.getChildAt(i);
-//            view.onCameraOpened(camera);
-//        }
-//    }
 
-// camera 拍照时调用， 把jpeg传给onPicture
-
-    private void onPicture(byte[] jpeg) {
-        Log.i(TAG2 , "onPictureTaken onPicture begin" + System.currentTimeMillis() );
-        Log.i(TAG1 + "onPicture1", System.currentTimeMillis() + "");
-        mCapturingPicture = false;
-        long callbackTime = System.currentTimeMillis();
-        if (mCapturingVideo) {
-            message("Captured while taking video. Size=" + mCaptureNativeSize, false);
-            return;
-        }
-
-        // This can happen if picture was taken with a gesture.
-        if (mCaptureTime == 0) {
-            mCaptureTime = callbackTime - 300;
-        }
-
-        if (mCaptureNativeSize == null) {
-            mCaptureNativeSize = camera.getPictureSize();
-        }
-
-//        PicturePreviewActivity.setImage(jpeg);
-//        Intent intent = new Intent(CameraActivity.this, PicturePreviewActivity.class);
-
-        //====
-
-        String destinationFileName = "sample20180419.jpg";
-        Log.i(TAG1 + "CBytes2Bimap1", System.currentTimeMillis() + "");
-//        Bitmap bitmap =  Bytes2Bimap(jpeg);
-//        Log.i( TAG1+"Bytes2Bimap2",System.currentTimeMillis()+"");
-//
-//
-//        Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, null,null));
-//        Log.i( TAG1+"Uri.parse",System.currentTimeMillis()+"");
-//
-
-
-//        File file = new File(getExternalFilesDir("photos"),   "photo.jpg");
-        File file = new File(getExternalFilesDir("photos"), "photo.jpg");
-        Log.i(TAG1 + "ileWithByte1", System.currentTimeMillis() + "");
-        createFileWithByte(jpeg, file);
-        Log.i(TAG1 + "ileWithByte2", System.currentTimeMillis() + "");
-        Uri uri = Uri.fromFile(file);
-
-        MyUCrop uCrop = MyUCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
-//        uCrop = basisConfig(uCrop);
-//        uCrop = advancedConfig(uCrop);
-        uCrop.withAspectRatio(300, 300);
-        Log.i(TAG1 + "UCrop.of", System.currentTimeMillis() + "");
-        // setupFragment(uCrop);
-        Intent intent = new Intent(CameraActivity.this, MyUcropActivity.class);
-        uCrop.setCropIntent(intent);
-        uCrop.start(this, REQUEST_CODE_CAMERA);
-        Log.i(TAG2 , "onPictureTaken onPicture  end" + System.currentTimeMillis() );
-
-        Log.i(TAG1 + "setupFragment", System.currentTimeMillis() + "");
-        mSkipTime = System.currentTimeMillis() - mSkipTime;
-        Log.i(TAG1 + "mSkipTime2", System.currentTimeMillis() + "");
-        Log.i(TAG1 + "mSkipdiff", mSkipTime + "");
-        Log.i(TAG1 + "onPicture2", System.currentTimeMillis() + "");
-//       数据还原
-        mCaptureTime = 0;
-        mCaptureNativeSize = null;
-}
 
     @Override
     public void onClick(View view) {
@@ -319,11 +215,11 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
                 edit();
                 break;
             case R.id.capturePhoto:
-                Log.i(TAG2 , "onClick capturePhoto" + System.currentTimeMillis() );
+                Log.i(TAG,"onClick begin:" + System.currentTimeMillis()) ;
                 capturePhoto();
                 break;
             case R.id.toggleCamera:
-                toggleCamera();
+//                toggleCamera();
                 break;
             default:
                 break;
@@ -332,11 +228,6 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
 
     @Override
     public void onBackPressed() {
-        // BottomSheetBehavior b = BottomSheetBehavior.from(controlPanel);
-//        if (b.getState() != BottomSheetBehavior.STATE_HIDDEN) {
-//            b.setState(BottomSheetBehavior.STATE_HIDDEN);
-//            return;
-//        }
         super.onBackPressed();
     }
 
@@ -346,7 +237,7 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
         boolean mode = cb_mode.isChecked();
         if (mode) {
             // 进入相册 以下是例子：不需要的api可以不写
-            PictureSelector.create(CameraActivity.this)
+            PictureSelector.create(CameraActivityKit.this)
                     .openGallery(chooseMode)// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
                     .theme(themeId)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
                     .maxSelectNum(maxSelectNum)// 最大图片选择数量
@@ -396,38 +287,36 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
      * 拍照按钮调用的方法
      */
     private void capturePhoto() {
-        Log.i(TAG2 , "onClick capturePhoto begin" + System.currentTimeMillis() );
-        if (mCapturingPicture) {
-            return;
-        }
-        mCapturingPicture = true;
-        mCaptureTime = System.currentTimeMillis();
-        mCaptureNativeSize = camera.getPictureSize();
-//        message("Capturing picture...", false);
-//        捕获图片，  可以触发 addCameraListener.onPictureTaken 监听
-        camera.capturePicture();
+        Log.i(TAG,"capturePhoto begin:" + System.currentTimeMillis()) ;
         mSkipTime = System.currentTimeMillis();
-        Log.i(TAG1 + "mSkipTime1", mSkipTime + "");
-        Log.i(TAG2 , "onClick capturePhoto end" + System.currentTimeMillis() );
+        camera.captureImage(new CameraKitEventCallback<CameraKitImage>() {
+            @Override
+            public void callback(CameraKitImage event) {
+                Log.i(TAG,"callback begin:" + System.currentTimeMillis()) ;
+                imageCaptured(event);
+            }
+        });
+        Log.i(TAG,"capturePhoto end:" + System.currentTimeMillis()) ;
+    }
+
+    public void imageCaptured(CameraKitImage image) {
+        Log.i(TAG,"imageCaptured begin:" + System.currentTimeMillis()) ;
+        byte[] jpeg = image.getJpeg();
+        File file = new File(getExternalFilesDir("photos"), "photo.jpg");
+        createFileWithByte(jpeg, file);
+        Uri uri = Uri.fromFile(file);
+        MyUCrop uCrop = MyUCrop.of(uri, Uri.fromFile(new File(getCacheDir(), "20180501")));
+//        uCrop = basisConfig(uCrop);
+//        uCrop = advancedConfig(uCrop);
+        uCrop.withAspectRatio(300, 300);
+        // setupFragment(uCrop);
+        Intent intent = new Intent(CameraActivityKit.this, MyUcropActivity.class);
+        uCrop.setCropIntent(intent);
+        uCrop.start(this, REQUEST_CODE_CAMERA);
+        Log.i(TAG,"imageCaptured end:" + System.currentTimeMillis()) ;
     }
 
 
-    private void toggleCamera() {
-        if (mCapturingPicture) {
-            return;
-        }
-        switch (camera.toggleFacing()) {
-            case BACK:
-                message("Switched to back camera!", false);
-                break;
-
-            case FRONT:
-                message("Switched to front camera!", false);
-                break;
-            default:
-                break;
-        }
-    }
 
 
 
@@ -448,7 +337,7 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        camera.destroy();
+//        camera.destroy();
     }
 
     @Override

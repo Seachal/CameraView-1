@@ -4,10 +4,11 @@ buildscript {
     repositories {
         jcenter()
         google()
+      //  maven { url "https://jitpack.io" }
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
         // https://inthecheesefactory.com/blog/how-to-upload-library-to-jcenter-maven-central-as-dependency/en
         // https://www.theguardian.com/technology/developer-blog/2016/dec/06/how-to-publish-an-android-library-a-mysterious-conversation
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
@@ -19,13 +20,14 @@ allprojects {
     repositories {
         jcenter()
         google()
+        maven { url "https://jitpack.io" }
     }
 }
 
 ext {
     compileSdkVersion = 27
     buildToolsVersion = "27.0.3"
-    supportLibVersion = '27.1.0'
+    supportLibVersion = '27.1.1'
     minSdkVersion = 15
     targetSdkVersion = 27
 }
