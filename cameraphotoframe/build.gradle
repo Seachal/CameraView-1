@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
-
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
 
     defaultConfig {
         applicationId "seachal.com.cameraphotoframe"
-        minSdkVersion 18
-        targetSdkVersion 27
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -43,9 +43,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-//    implementation "com.android.support:design:$supportLibVersion"
 
-//    implementation "com.android.support:design:26.1.0"
 
 //    compile 'com.github.yalantis:ucrop:2.2.2'
     //   compile 'com.github.yalantis:ucrop:2.2.2-native'
@@ -54,13 +52,20 @@ dependencies {
     implementation "com.android.support:design:$supportLibVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
+
+
+    /*PictureSelector 中包含  ucrop、glide  */
     implementation 'com.github.LuckSiege.PictureSelector:picture_library:v2.2.3'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.+'
+    //  camerakit 是一个相机库，但是 capture 图片的速度太慢了。
     implementation 'com.wonderkiln:camerakit:0.13.1'
-//    compile project(':ucrop')
+    //    implementation 'com.otaliastudios:cameraview:1.5.0'
+    //    compile project(':ucrop')
     compile project(path: ':cameraview')
 
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -26,6 +26,12 @@
             android:layout_height="wrap_content"
             android:text="camerakit"
             />
+        <TextView
+            android:id="@+id/bt_camera_start_Act_for_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="bt_camera_start_Act_for_result"
+            />
     </LinearLayout>
 
-</RelativeLayout>
+</ScrollView>

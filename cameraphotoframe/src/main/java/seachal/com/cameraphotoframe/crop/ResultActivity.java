@@ -1,6 +1,7 @@
 package seachal.com.cameraphotoframe.crop;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,14 +14,18 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.entity.LocalMedia;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import seachal.com.cameraphotoframe.R;
 
 /**
  * Created by Oleksii Shliama (https://github.com/shliama).
  */
-public class ResultActivity extends BaseActivity {
+public class ResultActivity extends Activity {
 
 
     private static final String TAG = "ResultActivity";
@@ -31,9 +36,11 @@ public class ResultActivity extends BaseActivity {
     private ImageView  iv_result;
     private Button   bt_close;
     private  String result_path;
+    private  int themeId ;
 
     public static void startWithUri(@NonNull Context context, @NonNull Uri uri) {
         Intent intent = new Intent(context, ResultActivity.class);
+
         intent.setData(uri);
         context.startActivity(intent);
     }
@@ -42,13 +49,13 @@ public class ResultActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+        themeId = R.style.AppTheme;
         iv_result = findViewById(R.id.iv_result);
         bt_close = findViewById(R.id.bt_close);
 
         LocalMedia media = getIntent().getParcelableExtra("Select_media");
-        if (media == null) {
-            Uri uri = getIntent().getData();
-            result_path = uri.getPath();
+        if (media != null) {
+            result_path = media.getCutPath();
 //            if (uri != null) {
 //                try {
 //                    UCropView uCropView = findViewById(R.id.ucrop);
@@ -72,21 +79,33 @@ public class ResultActivity extends BaseActivity {
 //                actionBar.setTitle(getString(R.string.format_crop_result_d_d, options.outWidth, options.outHeight));
 //            }
         }else{
-            result_path = media.getCutPath();
+
+               Uri resultUri =  MyUCrop.getOutput(getIntent());
+               result_path = resultUri.getPath();
         }
-//        Glide.with(viewHolder.itemView.getContext())
-//                .load(path)
-//                .apply(options)
-//                .into(viewHolder.mImg);
+
+        final List<LocalMedia> selectList = new ArrayList<>();
+        LocalMedia  localMedia = new LocalMedia();
+        localMedia.setPath(result_path);
+        selectList.add(localMedia);
+        //  glide
         RequestOptions options = new RequestOptions()
                 .centerCrop()
 //                .placeholder(R.color.color_f6)
                 .diskCacheStrategy(DiskCacheStrategy.ALL);
-
         Glide.with(getApplicationContext())
                 .load(result_path)
                 .apply(options)
                 .into(iv_result);
+        iv_result.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //PictureSelector.create(MainActivity.this).themeStyle(themeId).externalPicturePreview(position, "/custom_file", selectList);
+                PictureSelector.create(ResultActivity.this).themeStyle(themeId).openExternalPreview(0,selectList );
+
+            }
+        });
+
         bt_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,131 +114,6 @@ public class ResultActivity extends BaseActivity {
         });
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(final Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_result, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        if (item.getItemId() == R.id.menu_download) {
-//            saveCroppedImage();
-//        } else if (item.getItemId() == android.R.id.home) {
-//            onBackPressed();
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-//
-//
-//    /**
-//     * Callback received when a permissions request has been completed.
-//     */
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        switch (requestCode) {
-//            case REQUEST_STORAGE_WRITE_ACCESS_PERMISSION:
-//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    saveCroppedImage();
-//                }
-//                break;
-//            default:
-//                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        }
-//    }
-//
-//    private void saveCroppedImage() {
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//                    getString(R.string.permission_write_storage_rationale),
-//                    REQUEST_STORAGE_WRITE_ACCESS_PERMISSION);
-//        } else {
-//            Uri imageUri = getIntent().getData();
-//            if (imageUri != null && imageUri.getScheme().equals("file")) {
-//                try {
-//                    copyFileToDownloads(getIntent().getData());
-//                } catch (Exception e) {
-//                    Toast.makeText(ResultActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-//                    Log.e(TAG, imageUri.toString(), e);
-//                }
-//            } else {
-//                Toast.makeText(ResultActivity.this, getString(R.string.toast_unexpected_error), Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//    }
-//
-//    private void copyFileToDownloads(Uri croppedFileUri) throws Exception {
-//        String downloadsDirectoryPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-//        String filename = String.format(getApplicationContext().getString(R.string.ucrop_crop_filename), Calendar.getInstance().getTimeInMillis(), croppedFileUri.getLastPathSegment());
-//
-//        File saveFile = new File(downloadsDirectoryPath, filename);
-//
-//        FileInputStream inStream = new FileInputStream(new File(croppedFileUri.getPath()));
-//        FileOutputStream outStream = new FileOutputStream(saveFile);
-//        FileChannel inChannel = inStream.getChannel();
-//        FileChannel outChannel = outStream.getChannel();
-//        inChannel.transferTo(0, inChannel.size(), outChannel);
-//        inStream.close();
-//        outStream.close();
-//
-//        //    showNotification(saveFile);
-//        Toast.makeText(this, R.string.notification_image_saved, Toast.LENGTH_SHORT).show();
-//        finish();
-//    }
-//
-////    private void showNotification(@NonNull File file) {
-////        Intent intent = new Intent(Intent.ACTION_VIEW);
-////        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-////        Uri fileUri = FileProvider.getUriForFile(
-////                this,
-////                getString(R.string.file_provider_authorities),
-////                file);
-////
-////        intent.setDataAndType(fileUri, "image/*");
-////
-////        List<ResolveInfo> resInfoList = getPackageManager().queryIntentActivities(
-////                intent,
-////                PackageManager.MATCH_DEFAULT_ONLY);
-////        for (ResolveInfo info : resInfoList) {
-////            grantUriPermission(
-////                    info.activityInfo.packageName,
-////                    fileUri, FLAG_GRANT_WRITE_URI_PERMISSION | FLAG_GRANT_READ_URI_PERMISSION);
-////        }
-////
-////        NotificationCompat.Builder notificationBuilder;
-////        NotificationManager notificationManager = (NotificationManager) this
-////                .getSystemService(Context.NOTIFICATION_SERVICE);
-////        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-////            if (notificationManager != null) {
-////                notificationManager.createNotificationChannel(createChannel());
-////            }
-////            notificationBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
-////        } else {
-////            notificationBuilder = new NotificationCompat.Builder(this);
-////        }
-////
-////        notificationBuilder
-////                .setContentTitle(getString(R.string.app_name))
-////                .setContentText(getString(R.string.notification_image_saved_click_to_preview))
-////                .setTicker(getString(R.string.notification_image_saved))
-////                .setSmallIcon(R.drawable.ic_done)
-////                .setOngoing(false)
-////                .setContentIntent(PendingIntent.getActivity(this, 0, intent, 0))
-////                .setAutoCancel(true);
-////        if (notificationManager != null) {
-////            notificationManager.notify(DOWNLOAD_NOTIFICATION_ID_DONE, notificationBuilder.build());
-////        }
-////    }
-//
-//    @TargetApi(Build.VERSION_CODES.O)
-//    public NotificationChannel createChannel() {
-//        int importance = NotificationManager.IMPORTANCE_LOW;
-//        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, getString(R.string.channel_name), importance);
-//        channel.setDescription(getString(R.string.channel_description));
-//        channel.enableLights(true);
-//        channel.setLightColor(Color.YELLOW);
-//        return channel;
-//    }
+
 
 }

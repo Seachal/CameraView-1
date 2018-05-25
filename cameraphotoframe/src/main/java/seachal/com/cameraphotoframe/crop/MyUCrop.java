@@ -151,7 +151,13 @@ public class MyUCrop {
      * @param requestCode requestCode for result
      */
     public void start(@NonNull Activity activity, int requestCode) {
+//        activity.startActivityForResult(getCropIntent(), requestCode);
         activity.startActivityForResult(getCropIntent(), requestCode);
+    }
+
+
+    public void start(@NonNull Activity activity, String requestCode) {
+        activity.startActivity(getCropIntent());
     }
 
     /**
@@ -192,6 +198,8 @@ public class MyUCrop {
     public void start(@NonNull Context context, @NonNull android.support.v4.app.Fragment fragment, int requestCode) {
         fragment.startActivityForResult(getCropIntent(), requestCode);
     }
+
+
 
 //    /**
 //     * Get Intent to start {@link MyUCropActivity}

@@ -63,6 +63,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         controlPanel = findViewById(R.id.controls);
         ViewGroup group = (ViewGroup) controlPanel.getChildAt(0);
         Control[] controls = Control.values();
+//        循环取出参数值，根据参数值创建控制view，最后加入到group中
         for (Control control : controls) {
             ControlView view = new ControlView(this, control, this);
             group.addView(view, ViewGroup.LayoutParams.MATCH_PARENT,
@@ -153,6 +154,8 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         mCaptureNativeSize = camera.getPictureSize();
         message("Capturing picture...", false);
         camera.capturePicture();
+
+
     }
 
     private void captureVideo() {
@@ -202,6 +205,35 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
     protected void onResume() {
         super.onResume();
         camera.start();
+        if (camera.isStarted()){
+            camera.stop();
+        }
+        camera.start();
+        if (camera.isStarted()){
+            camera.stop();
+        }
+        camera.start();
+        if (camera.isStarted()){
+            camera.stop();
+        }
+        camera.start();
+        if (camera.isStarted()){
+            camera.stop();
+        }
+        camera.start();
+        if (camera.isStarted()){
+            camera.stop();
+        }
+        camera.start();
+        if (camera.isStarted()){
+            camera.stop();
+        }
+        camera.start();
+        if (camera.isStarted()){
+            camera.stop();
+        }
+        camera.start();
+
     }
 
     @Override
@@ -215,6 +247,7 @@ public class CameraActivity extends AppCompatActivity implements View.OnClickLis
         super.onDestroy();
         camera.destroy();
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

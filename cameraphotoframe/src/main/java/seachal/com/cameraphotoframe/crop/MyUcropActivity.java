@@ -81,7 +81,7 @@ public class MyUcropActivity extends AppCompatActivity {
 
     private static final String TAG = "UCropActivity";
 
-    public static final String  TAG2  = "CameraA2:";
+    public static final String TAG2 = "CameraA2:";
 
     private static final int TABS_COUNT = 3;
     private static final int SCALE_WIDGET_SENSITIVITY_COEFFICIENT = 15000;
@@ -122,7 +122,7 @@ public class MyUcropActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.my_ucrop_activity_photobox);
-        Log.i(TAG2 , "activi onCreate" + System.currentTimeMillis() );
+        Log.i(TAG2, "activi onCreate" + System.currentTimeMillis());
         final Intent intent = getIntent();
 
         setupViews(intent);
@@ -317,7 +317,7 @@ public class MyUcropActivity extends AppCompatActivity {
         }
     }
 
-//    /**
+    //    /**
 //     * Configures and styles both status bar and toolbar.
 //     */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -642,18 +642,29 @@ public class MyUcropActivity extends AppCompatActivity {
     }
 
     protected void setResultUri(Uri uri, float resultAspectRatio, int offsetX, int offsetY, int imageWidth, int imageHeight) {
-        setResult(RESULT_OK, new Intent()
-                .putExtra(MyUCrop.EXTRA_OUTPUT_URI, uri)
+//        setResult(RESULT_OK, new Intent()
+//                .putExtra(MyUCrop.EXTRA_OUTPUT_URI, uri)
+//                .putExtra(MyUCrop.EXTRA_OUTPUT_CROP_ASPECT_RATIO, resultAspectRatio)
+//                .putExtra(MyUCrop.EXTRA_OUTPUT_IMAGE_WIDTH, imageWidth)
+//                .putExtra(MyUCrop.EXTRA_OUTPUT_IMAGE_HEIGHT, imageHeight)
+//                .putExtra(MyUCrop.EXTRA_OUTPUT_OFFSET_X, offsetX)
+//                .putExtra(MyUCrop.EXTRA_OUTPUT_OFFSET_Y, offsetY)
+//        );
+
+        Intent intent = new Intent(MyUcropActivity.this, ResultActivity.class);
+        startActivity(intent.putExtra(MyUCrop.EXTRA_OUTPUT_URI, uri)
                 .putExtra(MyUCrop.EXTRA_OUTPUT_CROP_ASPECT_RATIO, resultAspectRatio)
                 .putExtra(MyUCrop.EXTRA_OUTPUT_IMAGE_WIDTH, imageWidth)
                 .putExtra(MyUCrop.EXTRA_OUTPUT_IMAGE_HEIGHT, imageHeight)
                 .putExtra(MyUCrop.EXTRA_OUTPUT_OFFSET_X, offsetX)
-                .putExtra(MyUCrop.EXTRA_OUTPUT_OFFSET_Y, offsetY)
-        );
+                .putExtra(MyUCrop.EXTRA_OUTPUT_OFFSET_Y, offsetY));
+
     }
 
     protected void setResultError(Throwable throwable) {
-        setResult(MyUCrop.RESULT_ERROR, new Intent().putExtra(MyUCrop.EXTRA_ERROR, throwable));
+//        setResult(MyUCrop.RESULT_ERROR, new Intent().putExtra(MyUCrop.EXTRA_ERROR, throwable));
+        Intent intent = new Intent(MyUcropActivity.this, ResultActivity.class);
+        startActivity(intent.putExtra(MyUCrop.EXTRA_ERROR, throwable));
     }
 
 }

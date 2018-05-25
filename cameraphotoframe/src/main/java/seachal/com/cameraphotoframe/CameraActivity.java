@@ -6,12 +6,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -24,6 +26,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
@@ -41,16 +46,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import seachal.com.cameraphotoframe.crop.BaseActivity;
 import seachal.com.cameraphotoframe.crop.MyUCrop;
 import seachal.com.cameraphotoframe.crop.MyUcropActivity;
-import seachal.com.cameraphotoframe.crop.ResultActivity;
 import seachal.com.cameraphotoframe.scanner.ScannerFinderView;
 
 
 //public class CameraActivity extends AppCompatActivity implements View.OnClickListener, /*ControlView.Callback,*/ SurfaceHolder.Callback {
 
-public class CameraActivity extends BaseActivity implements View.OnClickListener,
+public class CameraActivity extends AppCompatActivity implements View.OnClickListener,
         RadioGroup.OnCheckedChangeListener, CompoundButton.OnCheckedChangeListener  {
     private CameraView camera;
 //    private ViewGroup controlPanel;
@@ -66,15 +69,12 @@ public class CameraActivity extends BaseActivity implements View.OnClickListener
 
     private static final String TAG1 = "CameraA:";
     private static final String TAG2 = "CameraA2:";
+    private static final String TAGoN = "CameraActivityOn:";
 
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 134;
 ////seachal
-//    private SurfaceHolder mHolder;
-
-
     private ScannerFinderView mQrCodeFinderView;
     private static final int REQUEST_CODE_CAMERA = 131;
-
 //    select  begin
 private final static String TAGS = CameraActivity.class.getSimpleName();
     private List<LocalMedia> selectList = new ArrayList<>();
@@ -129,6 +129,12 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
 
     private LinearLayout llCameraControl;
 
+//     result
+    private ImageView  iv_result;
+    private Button bt_close;
+    private  String result_path;
+    private View  ll_result;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -176,7 +182,6 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
 
 
         CameraLogger.setLogLevel(CameraLogger.LEVEL_VERBOSE);
-
         camera = findViewById(R.id.camera);
         llCameraControl = findViewById(R.id.ll_camera_control);
         // 设置宽高
@@ -210,22 +215,42 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
         findViewById(R.id.captureVideo).setOnClickListener(this);
         findViewById(R.id.toggleCamera).setOnClickListener(this);
 
-//        controlPanel = findViewById(R.id.controls);
-//        ViewGroup group = (ViewGroup) controlPanel.getChildAt(0);
-//        Control[] controls = Control.values();
-//        for (Control control : controls) {
-//            ControlView view = new ControlView(this, control, this);
-//            group.addView(view, ViewGroup.LayoutParams.MATCH_PARENT,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT);
-//        }
 
-//        controlPanel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//
+        iv_result = findViewById(R.id.iv_result);
+//        bt_close = findViewById(R.id.bt_close);
+
+        ll_result = findViewById(R.id.ll_result);
+
+
+
+
+//        // 清空图片缓存，包括裁剪、压缩后的图片 注意:必须要在上传完成后调用 必须要获取权限
+//        RxPermissions permissions = new RxPermissions(this);
+//        permissions.request(Manifest.permission.WRITE_EXTERNAL_STORAGE).subscribe(new Observer<Boolean>() {
 //            @Override
-//            public void onGlobalLayout() {
-//                BottomSheetBehavior b = BottomSheetBehavior.from(controlPanel);
-//                b.setState(BottomSheetBehavior.STATE_HIDDEN);
+//            public void onSubscribe(Disposable d) {
+//            }
+//
+//            @Override
+//            public void onNext(Boolean aBoolean) {
+//                if (aBoolean) {
+//                    PictureFileUtils.deleteCacheDirFile(CameraActivity.this);
+//                } else {
+//                    Toast.makeText(CameraActivity.this,
+//                            getString(R.string.picture_jurisdiction), Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//            }
+//
+//            @Override
+//            public void onComplete() {
 //            }
 //        });
+
     }
 
 
@@ -275,22 +300,17 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
 
         String destinationFileName = "sample20180419.jpg";
         Log.i(TAG1 + "CBytes2Bimap1", System.currentTimeMillis() + "");
-//        Bitmap bitmap =  Bytes2Bimap(jpeg);
-//        Log.i( TAG1+"Bytes2Bimap2",System.currentTimeMillis()+"");
-//
-//
-//        Uri uri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, null,null));
-//        Log.i( TAG1+"Uri.parse",System.currentTimeMillis()+"");
-//
-
-
-//        File file = new File(getExternalFilesDir("photos"),   "photo.jpg");
         File file = new File(getExternalFilesDir("photos"), "photo.jpg");
         Log.i(TAG1 + "ileWithByte1", System.currentTimeMillis() + "");
         createFileWithByte(jpeg, file);
         Log.i(TAG1 + "ileWithByte2", System.currentTimeMillis() + "");
         Uri uri = Uri.fromFile(file);
 
+
+
+
+
+//        MyUCrop uCrop = MyUCrop.of(uri, Uri.fromFile(new File(getCacheDir(), System.currentTimeMillis()+".jpg")));
         MyUCrop uCrop = MyUCrop.of(uri, Uri.fromFile(new File(getCacheDir(), destinationFileName)));
 //        uCrop = basisConfig(uCrop);
 //        uCrop = advancedConfig(uCrop);
@@ -299,7 +319,12 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
         // setupFragment(uCrop);
         Intent intent = new Intent(CameraActivity.this, MyUcropActivity.class);
         uCrop.setCropIntent(intent);
-        uCrop.start(this, REQUEST_CODE_CAMERA);
+//        if (camera.isStarted()){
+//
+//        }
+
+//        uCrop.start(this, REQUEST_CODE_CAMERA);
+        uCrop.start(this,"");
         Log.i(TAG2 , "onPictureTaken onPicture  end" + System.currentTimeMillis() );
 
         Log.i(TAG1 + "setupFragment", System.currentTimeMillis() + "");
@@ -436,19 +461,40 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
     @Override
     protected void onResume() {
         super.onResume();
-        camera.start();
+        if ( !camera.isStarted()) {
+            camera.start();
+        }
+//        camera.start();
+        Log.i(TAGoN,"onResume_camera.start"+System.currentTimeMillis());
+        ll_result.setVisibility(View.VISIBLE);
+        result_path = "data/data/seachal.com.cameraphotoframe/cache/sample20180419.jpg";
+        //  glide
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+//                .placeholder(R.color.color_f6)
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
+        Glide.with(getApplicationContext())
+                .load(result_path)
+                .apply(options)
+                .into(iv_result);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        camera.stop();
+        if (camera.isStarted()){
+            camera.stop();
+        }
+//        camera.stop();
+        Log.i(TAGoN,"onPause_camera.stop"+System.currentTimeMillis());
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+//        if (camera.is)
         camera.destroy();
+        Log.i(TAGoN,"onDestroy_camera.destroy"+System.currentTimeMillis());
     }
 
     @Override
@@ -527,6 +573,8 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+//        camera.stop();
+        ll_result.setVisibility(View.VISIBLE);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PictureConfig.CHOOSE_REQUEST:  // 从相册选择
@@ -541,21 +589,23 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
                         Log.i("图片-----》", media.getPath());
                     }
                     LocalMedia media = selectList.get(0);
-//                    String strCut = media.getCutPath();
-                    Intent intent = new Intent(this,ResultActivity.class);
-                    intent.putExtra("Select_media",media);
+////                    String strCut = media.getCutPath();
+//                    Intent intent = new Intent(this,ResultActivity.class);
+//                    intent.putExtra("Select_media",media);
+//
+//                    startActivity(intent);
 
-                    startActivity(intent);
+                    setResutl(media,null);
                     break;
 
                 case REQUEST_CODE_CAMERA:  // 从相机
                     //intent.putExtra("com.yalantis.ucrop.OutputUri", uri).putExtra("com.yalantis.ucrop.CropAspectRatio", resultAspectRatio).putExtra("com.yalantis.ucrop.ImageWidth", imageWidth).putExtra("com.yalantis.ucrop.ImageHeight", imageHeight).putExtra("com.yalantis.ucrop.OffsetX", offsetX).putExtra("com.yalantis.ucrop.OffsetY", offsetY);
-                    final Uri resultUri = data.getParcelableExtra(MyUCrop.EXTRA_OUTPUT_URI);
-
-                    String cutPath = resultUri.getPath();
-                    Intent intent2 = new Intent(this, ResultActivity.class);
-                    intent2.setData(resultUri);
-                    startActivity(intent2);
+//                    final Uri resultUri = data.getParcelableExtra(MyUCrop.EXTRA_OUTPUT_URI);
+//                    Intent intent2 = new Intent(CameraActivity.this, ResultActivity.class);
+//                    intent2.setData(resultUri);
+//                    startActivity(intent2);
+                    Uri resultUri =  MyUCrop.getOutput(data);
+                    setResutl(null,resultUri);
                     break;
                 default:
                     break;
@@ -563,6 +613,49 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
 
             }
         }
+    }
+
+
+    private  void  setResutl(LocalMedia media, Uri uri ){
+
+
+        if (media != null) {
+            result_path = media.getCutPath();
+//            if (uri != null) {
+//                try {
+//                    UCropView uCropView = findViewById(R.id.ucrop);
+//                    uCropView.getCropImageView().setImageUri(uri, null);
+//                    uCropView.getOverlayView().setShowCropFrame(false);
+//                    uCropView.getOverlayView().setShowCropGrid(false);
+//                    uCropView.getOverlayView().setDimmedColor(Color.TRANSPARENT);
+//                } catch (Exception e) {
+//                    Log.e(TAG, "setImageUri", e);
+//                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+//                }
+//            }
+//            final BitmapFactory.Options options = new BitmapFactory.Options();
+//            options.inJustDecodeBounds = true;
+//            BitmapFactory.decodeFile(new File(getIntent().getData().getPath()).getAbsolutePath(), options);
+//
+//            setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+//            final ActionBar actionBar = getSupportActionBar();
+//            if (actionBar != null) {
+//                actionBar.setDisplayHomeAsUpEnabled(true);
+//                actionBar.setTitle(getString(R.string.format_crop_result_d_d, options.outWidth, options.outHeight));
+//            }
+        }else{
+
+            result_path = uri.getPath();
+        }
+        //  glide
+        RequestOptions options = new RequestOptions()
+                .centerCrop()
+//                .placeholder(R.color.color_f6)
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
+        Glide.with(getApplicationContext())
+                .load(result_path)
+                .apply(options)
+                .into(iv_result);
     }
 
     @Override
@@ -574,4 +667,6 @@ private final static String TAGS = CameraActivity.class.getSimpleName();
     public void onCheckedChanged(RadioGroup group, int checkedId) {
 
     }
+
+
 }

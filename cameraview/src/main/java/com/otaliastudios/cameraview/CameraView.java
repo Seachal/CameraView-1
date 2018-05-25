@@ -135,8 +135,10 @@ public class CameraView extends FrameLayout {
             //noinspection ConstantConditions
             constraints.add(SizeSelectors.aspectRatio(AspectRatio.parse(a.getString(R.styleable.CameraView_cameraPictureSizeAspectRatio)), 0));
         }
-        if (a.getBoolean(R.styleable.CameraView_cameraPictureSizeSmallest, false)) constraints.add(SizeSelectors.smallest());
-        if (a.getBoolean(R.styleable.CameraView_cameraPictureSizeBiggest, false)) constraints.add(SizeSelectors.biggest());
+        if (a.getBoolean(R.styleable.CameraView_cameraPictureSizeSmallest, false))
+            constraints.add(SizeSelectors.smallest());
+        if (a.getBoolean(R.styleable.CameraView_cameraPictureSizeBiggest, false))
+            constraints.add(SizeSelectors.biggest());
         SizeSelector selector = !constraints.isEmpty() ?
                 SizeSelectors.and(constraints.toArray(new SizeSelector[constraints.size()])) :
                 SizeSelectors.biggest();
@@ -242,9 +244,12 @@ public class CameraView extends FrameLayout {
 
     private String ms(int mode) {
         switch (mode) {
-            case AT_MOST: return "AT_MOST";
-            case EXACTLY: return "EXACTLY";
-            case UNSPECIFIED: return "UNSPECIFIED";
+            case AT_MOST:
+                return "AT_MOST";
+            case EXACTLY:
+                return "EXACTLY";
+            case UNSPECIFIED:
+                return "UNSPECIFIED";
         }
         return null;
     }
@@ -252,16 +257,16 @@ public class CameraView extends FrameLayout {
     /**
      * Measuring is basically controlled by layout params width and height.
      * The basic semantics are:
-     *
+     * <p>
      * - MATCH_PARENT: CameraView should completely fill this dimension, even if this might mean
-     *                 not respecting the preview aspect ratio.
+     * not respecting the preview aspect ratio.
      * - WRAP_CONTENT: CameraView should try to adapt this dimension to respect the preview
-     *                 aspect ratio.
-     *
+     * aspect ratio.
+     * <p>
      * When both dimensions are MATCH_PARENT, CameraView will fill its
      * parent no matter the preview. Thanks to what happens in {@link CameraPreview}, this acts like
      * a CENTER CROP scale type.
-     *
+     * <p>
      * When both dimensions are WRAP_CONTENT, CameraView will take the biggest dimensions that
      * fit the preview aspect ratio. This acts like a CENTER INSIDE scale type.
      */
@@ -298,7 +303,7 @@ public class CameraView extends FrameLayout {
 
         LOG.i("onMeasure:", "requested dimensions are", "(" + widthValue + "[" + ms(widthMode) + "]x" +
                 heightValue + "[" + ms(heightMode) + "])");
-        LOG.i("onMeasure:",  "previewSize is", "(" + previewWidth + "x" + previewHeight + ")");
+        LOG.i("onMeasure:", "previewSize is", "(" + previewWidth + "x" + previewHeight + ")");
 
         // (1) If we have fixed dimensions (either 300dp or MATCH_PARENT), there's nothing we should do,
         // other than respect it. The preview will eventually be cropped at the sides (by PreviewImpl scaling)
@@ -394,15 +399,15 @@ public class CameraView extends FrameLayout {
      * Maps a {@link Gesture} to a certain gesture action.
      * For example, you can assign zoom control to the pinch gesture by just calling:
      * <code>
-     *     cameraView.mapGesture(Gesture.PINCH, GestureAction.ZOOM);
+     * cameraView.mapGesture(Gesture.PINCH, GestureAction.ZOOM);
      * </code>
-     *
+     * <p>
      * Not all actions can be assigned to a certain gesture. For example, zoom control can't be
      * assigned to the Gesture.TAP gesture. Look at {@link Gesture} to know more.
      * This method returns false if they are not assignable.
      *
      * @param gesture which gesture to map
-     * @param action which action should be assigned
+     * @param action  which action should be assigned
      * @return true if this action could be assigned to this gesture
      */
     public boolean mapGesture(@NonNull Gesture gesture, GestureAction action) {
@@ -414,18 +419,18 @@ public class CameraView extends FrameLayout {
                     mPinchGestureLayout.enable(mGestureMap.get(Gesture.PINCH) != none);
                     break;
                 case TAP:
-                // case DOUBLE_TAP:
+                    // case DOUBLE_TAP:
                 case LONG_TAP:
                     mTapGestureLayout.enable(
                             mGestureMap.get(Gesture.TAP) != none ||
-                            // mGestureMap.get(Gesture.DOUBLE_TAP) != none ||
-                            mGestureMap.get(Gesture.LONG_TAP) != none);
+                                    // mGestureMap.get(Gesture.DOUBLE_TAP) != none ||
+                                    mGestureMap.get(Gesture.LONG_TAP) != none);
                     break;
                 case SCROLL_HORIZONTAL:
                 case SCROLL_VERTICAL:
                     mScrollGestureLayout.enable(
                             mGestureMap.get(Gesture.SCROLL_HORIZONTAL) != none ||
-                            mGestureMap.get(Gesture.SCROLL_VERTICAL) != none);
+                                    mGestureMap.get(Gesture.SCROLL_VERTICAL) != none);
                     break;
             }
             return true;
@@ -437,6 +442,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Clears any action mapped to the given gesture.
+     *
      * @param gesture which gesture to clear
      */
     public void clearGesture(@NonNull Gesture gesture) {
@@ -527,6 +533,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Returns whether the camera has started showing its preview.
+     *
      * @return whether the camera has started
      */
     public boolean isStarted() {
@@ -543,7 +550,9 @@ public class CameraView extends FrameLayout {
      * This should be called onResume(), or when you are ready with permissions.
      */
     public void start() {
-        if (!isEnabled()) return;
+        if (!isEnabled()) {
+            return;
+        }
 
         if (checkPermissions(getSessionType(), getAudio())) {
             // Update display orientation for current CameraController
@@ -556,9 +565,10 @@ public class CameraView extends FrameLayout {
 
     /**
      * Checks that we have appropriate permissions for this session type.
-     * Throws if session = audio and manifest did not add the microphone permissions.     
+     * Throws if session = audio and manifest did not add the microphone permissions.
+     *
      * @param sessionType the sessionType to be checked
-     * @param audio the audio setting to be checked
+     * @param audio       the audio setting to be checked
      * @return true if we can go on, false otherwise.
      */
     @SuppressLint("NewApi")
@@ -676,6 +686,7 @@ public class CameraView extends FrameLayout {
     /**
      * If present, returns a collection of extra properties from the current camera
      * session.
+     *
      * @return an ExtraProperties object.
      */
     @Nullable
@@ -686,16 +697,15 @@ public class CameraView extends FrameLayout {
 
     /**
      * Sets exposure adjustment, in EV stops. A positive value will mean brighter picture.
-     *
+     * <p>
      * If camera is not opened, this will have no effect.
      * If {@link CameraOptions#isExposureCorrectionSupported()} is false, this will have no effect.
      * The provided value should be between the bounds returned by {@link CameraOptions}, or it will
      * be capped.
      *
+     * @param EVvalue exposure correction value.
      * @see CameraOptions#getExposureCorrectionMinValue()
      * @see CameraOptions#getExposureCorrectionMaxValue()
-     *
-     * @param EVvalue exposure correction value.
      */
     public void setExposureCorrection(float EVvalue) {
         CameraOptions options = getCameraOptions();
@@ -712,6 +722,7 @@ public class CameraView extends FrameLayout {
     /**
      * Returns the current exposure correction value, typically 0
      * at start-up.
+     *
      * @return the current exposure correction value
      */
     public float getExposureCorrection() {
@@ -723,7 +734,7 @@ public class CameraView extends FrameLayout {
      * Sets a zoom value. This is not guaranteed to be supported by the current device,
      * but you can take a look at {@link CameraOptions#isZoomSupported()}.
      * This will have no effect if called before the camera is opened.
-     *
+     * <p>
      * Zoom value should be between 0 and 1, where 1 will be the maximum available zoom.
      * If it's not, it will be capped.
      *
@@ -738,6 +749,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Returns the current zoom value, something between 0 and 1.
+     *
      * @return the current zoom value
      */
     public float getZoom() {
@@ -748,12 +760,11 @@ public class CameraView extends FrameLayout {
     /**
      * Controls the grids to be drawn over the current layout.
      *
+     * @param gridMode desired grid mode
      * @see Grid#OFF
      * @see Grid#DRAW_3X3
      * @see Grid#DRAW_4X4
      * @see Grid#DRAW_PHI
-     *
-     * @param gridMode desired grid mode
      */
     public void setGrid(Grid gridMode) {
         mGridLinesLayout.setGridMode(gridMode);
@@ -762,6 +773,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Gets the current grid mode.
+     *
      * @return the current grid mode
      */
     public Grid getGrid() {
@@ -772,10 +784,9 @@ public class CameraView extends FrameLayout {
     /**
      * Controls the grids to be drawn over the current layout.
      *
+     * @param hdr desired hdr value
      * @see Hdr#OFF
      * @see Hdr#ON
-     *
-     * @param hdr desired hdr value
      */
     public void setHdr(Hdr hdr) {
         mCameraController.setHdr(hdr);
@@ -784,6 +795,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Gets the current hdr value.
+     *
      * @return the current hdr value
      */
     public Hdr getHdr() {
@@ -794,7 +806,7 @@ public class CameraView extends FrameLayout {
     /**
      * Set location coordinates to be found later in the jpeg EXIF header
      *
-     * @param latitude current latitude
+     * @param latitude  current latitude
      * @param longitude current longitude
      */
     public void setLocation(double latitude, double longitude) {
@@ -831,13 +843,12 @@ public class CameraView extends FrameLayout {
     /**
      * Sets desired white balance to current camera session.
      *
+     * @param whiteBalance desired white balance behavior.
      * @see WhiteBalance#AUTO
      * @see WhiteBalance#INCANDESCENT
      * @see WhiteBalance#FLUORESCENT
      * @see WhiteBalance#DAYLIGHT
      * @see WhiteBalance#CLOUDY
-     *
-     * @param whiteBalance desired white balance behavior.
      */
     public void setWhiteBalance(WhiteBalance whiteBalance) {
         mCameraController.setWhiteBalance(whiteBalance);
@@ -846,6 +857,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Returns the current white balance behavior.
+     *
      * @return white balance value.
      */
     public WhiteBalance getWhiteBalance() {
@@ -856,10 +868,9 @@ public class CameraView extends FrameLayout {
     /**
      * Sets which camera sensor should be used.
      *
+     * @param facing a facing value.
      * @see Facing#FRONT
      * @see Facing#BACK
-     *
-     * @param facing a facing value.
      */
     public void setFacing(Facing facing) {
         mCameraController.setFacing(facing);
@@ -868,6 +879,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Gets the facing camera currently being used.
+     *
      * @return a facing value.
      */
     public Facing getFacing() {
@@ -900,12 +912,11 @@ public class CameraView extends FrameLayout {
     /**
      * Sets the flash mode.
      *
+     * @param flash desired flash mode.
      * @see Flash#OFF
      * @see Flash#ON
      * @see Flash#AUTO
      * @see Flash#TORCH
-
-     * @param flash desired flash mode.
      */
     public void setFlash(Flash flash) {
         mCameraController.setFlash(flash);
@@ -914,6 +925,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Gets the current flash mode.
+     *
      * @return a flash mode
      */
     public Flash getFlash() {
@@ -924,10 +936,9 @@ public class CameraView extends FrameLayout {
     /**
      * Controls the audio mode.
      *
+     * @param audio desired audio value
      * @see Audio#OFF
      * @see Audio#ON
-     *
-     * @param audio desired audio value
      */
     public void setAudio(Audio audio) {
 
@@ -951,6 +962,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Gets the current audio value.
+     *
      * @return the current audio value
      */
     public Audio getAudio() {
@@ -966,8 +978,10 @@ public class CameraView extends FrameLayout {
      * @param y should be between 0 and getHeight()
      */
     public void startAutoFocus(float x, float y) {
-        if (x < 0 || x > getWidth()) throw new IllegalArgumentException("x should be >= 0 and <= getWidth()");
-        if (y < 0 || y > getHeight()) throw new IllegalArgumentException("y should be >= 0 and <= getHeight()");
+        if (x < 0 || x > getWidth())
+            throw new IllegalArgumentException("x should be >= 0 and <= getWidth()");
+        if (y < 0 || y > getHeight())
+            throw new IllegalArgumentException("y should be >= 0 and <= getHeight()");
         mCameraController.startAutoFocus(null, new PointF(x, y));
     }
 
@@ -978,10 +992,9 @@ public class CameraView extends FrameLayout {
      * - {@link #startCapturingVideo(File)} will not throw any exception
      * - {@link #capturePicture()} might fallback to {@link #captureSnapshot()} or might not work
      *
+     * @param sessionType desired session type.
      * @see SessionType#PICTURE
      * @see SessionType#VIDEO
-     *
-     * @param sessionType desired session type.
      */
     public void setSessionType(SessionType sessionType) {
 
@@ -1005,6 +1018,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Gets the current session type.
+     *
      * @return the current session type
      */
     public SessionType getSessionType() {
@@ -1029,6 +1043,7 @@ public class CameraView extends FrameLayout {
      * If it's not, a lower quality will be chosen, until a supported one is found.
      * If sessionType is video, this might trigger a camera restart and a change in preview size.
      *
+     * @param videoQuality requested video quality
      * @see VideoQuality#LOWEST
      * @see VideoQuality#HIGHEST
      * @see VideoQuality#MAX_QVGA
@@ -1036,8 +1051,6 @@ public class CameraView extends FrameLayout {
      * @see VideoQuality#MAX_720P
      * @see VideoQuality#MAX_1080P
      * @see VideoQuality#MAX_2160P
-     *
-     * @param videoQuality requested video quality
      */
     public void setVideoQuality(VideoQuality videoQuality) {
         mCameraController.setVideoQuality(videoQuality);
@@ -1046,6 +1059,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Gets the current video quality.
+     *
      * @return the current video quality
      */
     public VideoQuality getVideoQuality() {
@@ -1055,6 +1069,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Sets the JPEG compression quality for image outputs.
+     *
      * @param jpegQuality a 0-100 integer.
      */
     public void setJpegQuality(int jpegQuality) {
@@ -1067,6 +1082,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Gets the JPEG compression quality for image outputs.
+     *
      * @return a 0-100 integer
      */
     public int getJpegQuality() {
@@ -1078,7 +1094,7 @@ public class CameraView extends FrameLayout {
      * Whether we should crop the picture output to match CameraView aspect ratio.
      * This is only relevant if CameraView dimensions were somehow constrained
      * (e.g. by fixed value or MATCH_PARENT) and do not match internal aspect ratio.
-     *
+     * <p>
      * Please note that this requires additional computations after the picture is taken.
      *
      * @param cropOutput whether to crop
@@ -1091,8 +1107,8 @@ public class CameraView extends FrameLayout {
     /**
      * Returns whether we should crop the picture output to match CameraView aspect ratio.
      *
-     * @see #setCropOutput(boolean)
      * @return whether we crop
+     * @see #setCropOutput(boolean)
      */
     public boolean getCropOutput() {
         return mCropOutput;
@@ -1185,7 +1201,7 @@ public class CameraView extends FrameLayout {
      * Asks the camera to capture an image of the current scene.
      * This will trigger {@link CameraListener#onPictureTaken(byte[])} if a listener
      * was registered.
-     *
+     * <p>
      * Note that if sessionType is {@link SessionType#VIDEO}, this
      * might fall back to {@link #captureSnapshot()} (that is, we might capture a preview frame).
      *
@@ -1200,7 +1216,7 @@ public class CameraView extends FrameLayout {
      * Asks the camera to capture a snapshot of the current preview.
      * This eventually triggers {@link CameraListener#onPictureTaken(byte[])} if a listener
      * was registered.
-     *
+     * <p>
      * The difference with {@link #capturePicture()} is that this capture is faster, so it might be
      * better on slower cameras, though the result can be generally blurry or low quality.
      *
@@ -1250,9 +1266,8 @@ public class CameraView extends FrameLayout {
      * Recording will be automatically stopped after the given duration, overriding
      * temporarily any duration limit set by {@link #setVideoMaxDuration(int)}.
      *
-     * @param file a file where the video will be saved
+     * @param file           a file where the video will be saved
      * @param durationMillis recording max duration
-     *
      * @deprecated use {@link #setVideoMaxDuration(int)} instead.
      */
     @Deprecated
@@ -1292,6 +1307,7 @@ public class CameraView extends FrameLayout {
     /**
      * Returns the size used for the preview,
      * or null if it hasn't been computed (for example if the surface is not ready).
+     *
      * @return a Size
      */
     @Nullable
@@ -1303,6 +1319,7 @@ public class CameraView extends FrameLayout {
     /**
      * Returns the size used for the capture,
      * or null if it hasn't been computed yet (for example if the surface is not ready).
+     *
      * @return a Size
      */
     @Nullable
@@ -1371,8 +1388,8 @@ public class CameraView extends FrameLayout {
     /**
      * Gets the current sound effect behavior.
      *
-     * @see #setPlaySounds(boolean)
      * @return whether sound effects are supported
+     * @see #setPlaySounds(boolean)
      */
     public boolean getPlaySounds() {
         return mPlaySounds;
@@ -1383,11 +1400,10 @@ public class CameraView extends FrameLayout {
      * Sets the encoder for video recordings.
      * Defaults to {@link VideoCodec#DEVICE_DEFAULT}.
      *
+     * @param codec requested video codec
      * @see VideoCodec#DEVICE_DEFAULT
      * @see VideoCodec#H_263
      * @see VideoCodec#H_264
-     *
-     * @param codec requested video codec
      */
     public void setVideoCodec(VideoCodec codec) {
         mCameraController.setVideoCodec(codec);
@@ -1396,6 +1412,7 @@ public class CameraView extends FrameLayout {
 
     /**
      * Gets the current encoder for video recordings.
+     *
      * @return the current video codec
      */
     public VideoCodec getVideoCodec() {
@@ -1419,8 +1436,8 @@ public class CameraView extends FrameLayout {
      * Returns the maximum size in bytes for recorded video files, or 0
      * if no size was set.
      *
-     * @see #setVideoMaxSize(long)
      * @return the maximum size in bytes
+     * @see #setVideoMaxSize(long)
      */
     public long getVideoMaxSize() {
         return mCameraController.getVideoMaxSize();
@@ -1443,8 +1460,8 @@ public class CameraView extends FrameLayout {
      * Returns the maximum duration in milliseconds for video recordings, or 0
      * if no limit was set.
      *
-     * @see #setVideoMaxDuration(int)
      * @return the maximum duration in milliseconds
+     * @see #setVideoMaxDuration(int)
      */
     public int getVideoMaxDuration() {
         return mCameraController.getVideoMaxDuration();
@@ -1453,9 +1470,10 @@ public class CameraView extends FrameLayout {
 
     /**
      * Returns true if the camera is currently recording a video
+     *
      * @return boolean indicating if the camera is recording a video
      */
-    public boolean isCapturingVideo(){
+    public boolean isCapturingVideo() {
         return mCameraController.isCapturingVideo();
     }
 
@@ -1465,17 +1483,29 @@ public class CameraView extends FrameLayout {
 
     interface CameraCallbacks extends OrientationHelper.Callback {
         void dispatchOnCameraOpened(CameraOptions options);
+
         void dispatchOnCameraClosed();
+
         void onCameraPreviewSizeChanged();
+
         void onShutter(boolean shouldPlaySound);
+
         void processImage(byte[] jpeg, boolean consistentWithView, boolean flipHorizontally);
+
         void processSnapshot(YuvImage image, boolean consistentWithView, boolean flipHorizontally);
+
         void dispatchOnVideoTaken(File file);
+
         void dispatchOnFocusStart(@Nullable Gesture trigger, PointF where);
+
         void dispatchOnFocusEnd(@Nullable Gesture trigger, boolean success, PointF where);
+
         void dispatchOnZoomChanged(final float newValue, final PointF[] fingers);
+
         void dispatchOnExposureCorrectionChanged(float newValue, float[] bounds, PointF[] fingers);
+
         void dispatchFrame(Frame frame);
+
         void dispatchError(CameraException exception);
     }
 
@@ -1483,7 +1513,8 @@ public class CameraView extends FrameLayout {
 
         private CameraLogger mLogger = CameraLogger.create(CameraCallbacks.class.getSimpleName());
 
-        Callbacks() {}
+        Callbacks() {
+        }
 
         @Override
         public void dispatchOnCameraOpened(final CameraOptions options) {
@@ -1540,16 +1571,16 @@ public class CameraView extends FrameLayout {
          * Unfortunately this is not easy, because
          * - You can't write EXIF data to a byte[] array, not with support library at least
          * - You don't know what byte[] is, see {@link android.hardware.Camera.Parameters#setRotation(int)}.
-         *   Sometimes our rotation is encoded in the byte array, sometimes a rotated byte[] is returned.
-         *   Depends on the hardware.
-         *
+         * Sometimes our rotation is encoded in the byte array, sometimes a rotated byte[] is returned.
+         * Depends on the hardware.
+         * <p>
          * So for now we ignore flipping.
          *
          * @param consistentWithView is the final image (decoded respecting EXIF data) consistent with
          *                           the view width and height? Or should we flip dimensions to have a
          *                           consistent measure?
-         * @param flipHorizontally whether this picture should be flipped horizontally after decoding,
-         *                         because it was taken with the front camera.
+         * @param flipHorizontally   whether this picture should be flipped horizontally after decoding,
+         *                           because it was taken with the front camera.
          */
         @Override
         public void processImage(final byte[] jpeg, final boolean consistentWithView, final boolean flipHorizontally) {
@@ -1757,24 +1788,30 @@ public class CameraView extends FrameLayout {
      * Toggles the flash mode between {@link Flash#OFF},
      * {@link Flash#ON} and {@link Flash#AUTO}, in this order.
      *
-     * @deprecated Don't use this. Flash values might not be supported,
-     *             and the return value is unreliable.
-     *
      * @return the new flash value
+     * @deprecated Don't use this. Flash values might not be supported,
+     * and the return value is unreliable.
      */
     @Deprecated
     public Flash toggleFlash() {
         Flash flash = mCameraController.getFlash();
         switch (flash) {
-            case OFF: setFlash(Flash.ON); break;
-            case ON: setFlash(Flash.AUTO); break;
-            case AUTO: case TORCH: setFlash(Flash.OFF); break;
+            case OFF:
+                setFlash(Flash.ON);
+                break;
+            case ON:
+                setFlash(Flash.AUTO);
+                break;
+            case AUTO:
+            case TORCH:
+                setFlash(Flash.OFF);
+                break;
         }
         return mCameraController.getFlash();
     }
 
 
-    /* for tests */int getCameraId(){
+    /* for tests */int getCameraId() {
         return mCameraController.mCameraId;
     }
 
